@@ -22,11 +22,21 @@ class MaintenanceService
         );
     }
 
+    /**
+     * Get items.
+     *
+     * @return array
+     */
     public function getCoins(): array
     {
         return $this->coins;
     }
 
+    /**
+     * Get coins.
+     *
+     * @return array
+     */
     public function getItems(): array
     {
         return $this->items;
