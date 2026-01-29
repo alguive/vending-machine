@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\DTO\VendingMachineStatus;
+use App\DTO\VendingMachine;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 class VendingMachineRepository
@@ -21,11 +21,11 @@ class VendingMachineRepository
     /**
      * Read data from file.
      *
-     * @return VendingMachineStatus
+     * @return VendingMachine
      */
-    public function read(): VendingMachineStatus
+    public function read(): VendingMachine
     {
-        return VendingMachineStatus::fromJson($this->getFileContent());
+        return VendingMachine::fromJson($this->getFileContent());
     }
 
     /**
@@ -47,10 +47,10 @@ class VendingMachineRepository
      * Persist data on runtime file.
      *  Create file if not exists.
      *
-     * @param VendingMachineStatus $data
+     * @param VendingMachine $data
      * @return void
      */
-    public function persist(VendingMachineStatus $data): void
+    public function persist(VendingMachine $data): void
     {
         $machineStatusFile = \sprintf('%s%s', $this->projectDir, self::RUNTIME_JSON_PATH);
         $dir = \dirname($machineStatusFile);

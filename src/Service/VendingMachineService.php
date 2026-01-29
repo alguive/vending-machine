@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\DTO\ApiResponse;
-use App\DTO\VendingMachineStatus;
+use App\DTO\VendingMachine;
 use App\Repository\VendingMachineRepository;
 
 class VendingMachineService
@@ -44,19 +44,44 @@ class VendingMachineService
         return ApiResponse::success(\sprintf('Your balance is %s coins', $machineData->getBalance()));
     }
 
-    public function returnCoins(): void
+    /**
+     * Return coins when user wants them back.
+     *
+     * @return ApiResponse
+     */
+    public function returnCoins(): ApiResponse
     {
-        // @Todo
+        $machineData = $this->vendingMachineRepository->read();
+        $balance = \round($machineData->getBalance(), 2);
+
+        if ($balance === 0.0) {
+            return ApiResponse::error('No coins to return.');
+        }
+
+        try {
+            $coinsToReturn = $this->coinService->calculateChange($machineData);
+            $this->coinService->decrementCoins($coinsToReturn, $machineData);
+            $this->coinService->decreaseBalance($balance, $machineData);
+        } catch (\Throwable $exception) {
+            return ApiResponse::error($exception->getMessage());
+        }
+
+        $this->vendingMachineRepository->persist($machineData);
+
+        return ApiResponse::success(
+            \sprintf('Returned %s', $balance),
+            $coinsToReturn
+        );
     }
 
     /**
      * Manage coins at balance and coin inventory.
      *
      * @param float $coin
-     * @param VendingMachineStatus $machine
+     * @param VendingMachine $machine
      * @return void
      */
-    protected function manageCoins(float $coin, VendingMachineStatus $machine): void
+    protected function manageCoins(float $coin, VendingMachine $machine): void
     {
         $this->coinService->updateCoins($coin, $machine);
         $this->coinService->updateBalance($coin, $machine);

@@ -46,9 +46,9 @@ class VendingMachineController
             );
         }
 
-/*        return JsonResponse::fromJsonString(
-            $this->vendingMachineService->returnCoins()
-        );*/
+        return JsonResponse::fromJsonString(
+            $this->vendingMachineService->returnCoins()->toString()
+        );
     }
 
     /**

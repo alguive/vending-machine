@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\DTO;
 
-class VendingMachineStatus
+class VendingMachine
 {
     public function __construct(
         protected float $balance,
@@ -17,13 +17,13 @@ class VendingMachineStatus
      * Create DTO from JSON.
      *
      * @param string $json
-     * @return VendingMachineStatus
+     * @return VendingMachine
      */
-    public static function fromJson(string $json): VendingMachineStatus
+    public static function fromJson(string $json): VendingMachine
     {
         $data = self::parseJson($json);
 
-        return new VendingMachineStatus(
+        return new VendingMachine(
             balance: $data['balance'],
             coins: $data['coins'],
             items: $data['items'],
@@ -59,6 +59,18 @@ class VendingMachineStatus
     public function getCoinAmount(float $coin): int
     {
         return $this->coins[\number_format($coin, 2, '.', '')] ?? 0;
+    }
+
+    /**
+     * Set amount for specific coin.
+     *
+     * @param float $coin
+     * @param int $amount
+     * @return void
+     */
+    public function setCoinAmount(float $coin, int $amount): void
+    {
+        $this->coins[\number_format($coin, 2, '.', '')] = $amount;
     }
 
     /**
