@@ -10,3 +10,4 @@
 ###< symfony/framework-bundle ###
 
 .idea/
+/config/data/vending_machine_default.json

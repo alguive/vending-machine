@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Api;
 
 use App\Repository\VendingMachineRepository;
+use App\Service\VendingMachineService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -12,6 +13,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class VendingMachineController
 {
     public function __construct(
+        protected VendingMachineService $vendingMachineService,
         protected VendingMachineRepository $vendingMachineRepository,
     ) {
         // Empty constructor
@@ -31,13 +33,22 @@ class VendingMachineController
     }
 
     /**
+     * Insert ot return coins.
+     *
      * @throws \Exception
      */
     #[Route('/api/vending-machine/coins', name: 'api_vending_machine_insert_coins', methods: ['POST', 'DELETE'])]
     public function coins(Request $request): JsonResponse
     {
+        if ($request->getMethod() === 'POST') {
+            return JsonResponse::fromJsonString(
+                $this->vendingMachineService->insertCoin($request->getContent())
+            );
+        }
 
-        return new JsonResponse([]);
+//        return JsonResponse::fromJsonString(
+//            $this->vendingMachineService->returnCoins()
+//        );
     }
 
     /**

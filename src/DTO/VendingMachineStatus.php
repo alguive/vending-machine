@@ -114,7 +114,7 @@ class VendingMachineStatus
      */
     public function toJson(): string
     {
-        return \json_encode($this->toArray());
+        return \json_encode($this->toArray(), JSON_PRETTY_PRINT);
     }
 
     /**
