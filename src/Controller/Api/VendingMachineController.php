@@ -42,13 +42,13 @@ class VendingMachineController
     {
         if ($request->getMethod() === 'POST') {
             return JsonResponse::fromJsonString(
-                $this->vendingMachineService->insertCoin($request->getContent())
+                $this->vendingMachineService->insertCoin($request->getContent())->toString()
             );
         }
 
-//        return JsonResponse::fromJsonString(
-//            $this->vendingMachineService->returnCoins()
-//        );
+/*        return JsonResponse::fromJsonString(
+            $this->vendingMachineService->returnCoins()
+        );*/
     }
 
     /**
