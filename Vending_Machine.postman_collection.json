@@ -1,0 +1,163 @@
+{
+	"info": {
+		"_postman_id": "c6ff907f-ff70-4f05-88c7-2858cd5264c0",
+		"name": "Vending Machine",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38083394"
+	},
+	"item": [
+		{
+			"name": "VendingMachine [Status]",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/vending-machine/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"vending-machine",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "VendingMachine [Coins - Insert]",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"coin\": 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/vending-machine/coins",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"vending-machine",
+						"coins"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "VendingMachine [Coins - Return]",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/vending-machine/coins",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"vending-machine",
+						"coins"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "VendingMachine [purchase]",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"item\": \"SODA\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/vending-machine/purchase",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"vending-machine",
+						"purchase"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "VendingMachine [service]",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"coins\": {\n        \"0.05\": 20,\n        \"0.10\": 15,\n        \"0.25\": 10,\n        \"1.00\": 5\n    },\n    \"items\": {\n        \"water\": {\n            \"qty\": 10,\n            \"price\": 0.65\n        },\n        \"juice\": {\n            \"qty\": 5,\n            \"price\": 1\n        },\n        \"soda\": {\n            \"qty\": 3,\n            \"price\": 1.5\n        }\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/vending-machine/service",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"vending-machine",
+						"service"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
