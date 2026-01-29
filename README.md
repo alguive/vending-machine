@@ -2,8 +2,10 @@
 ---
 
 ## Start the environment
-```docker-compose up -d --build```
-
+```
+docker-compose up -d --build
+docker-compose exec php composer install
+```
 
 ## API Endpoints
 ```
@@ -19,3 +21,6 @@ http://localhost:8080/api/vending-machine/
   ├── service()        →  PUT    /api/vending-machine/service
   └── status()         →  GET    /api/vending-machine
 ```
+
+In the root directory there's the Postman Collection to import it and use it.
+
