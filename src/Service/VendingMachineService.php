@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\DTO\ApiResponse;
+use App\DTO\Coin;
 use App\DTO\MaintenanceService;
 use App\DTO\VendingMachine;
 use App\Repository\VendingMachineRepository;
@@ -39,16 +40,16 @@ class VendingMachineService
      *
      * @throws \JsonException
      */
-    public function insertCoin(string $coin): ApiResponse
+    public function insertCoin(string $rawCoin): ApiResponse
     {
+        $insertedCoin = $this->parseCoin($rawCoin);
         $machineData = $this->vendingMachineRepository->read();
-        $coinValue = \json_decode($coin, true, 512, JSON_THROW_ON_ERROR);
 
-        if (!$this->coinService->isValidCoin($coinValue['coin'], $machineData)) {
+        if (!$this->coinService->isValidCoin($insertedCoin, $machineData)) {
             return ApiResponse::error('The inserted coin is not valid');
         }
 
-        $this->manageCoins($coinValue['coin'], $machineData);
+        $this->manageCoins($insertedCoin, $machineData);
 
         if ($this->coinService->hasEnoughChange($machineData)) {
             $this->vendingMachineRepository->persist($machineData);
@@ -75,7 +76,7 @@ class VendingMachineService
 
         try {
             $coinsToReturn = $this->coinService->calculateChange($machineData);
-            $this->coinService->decrementCoins($coinsToReturn, $machineData);
+            $this->coinService->decreaseCoins($coinsToReturn, $machineData);
             $this->coinService->decreaseBalance($balance, $machineData);
         } catch (\Throwable $e) {
             return ApiResponse::error($e->getMessage());
@@ -98,16 +99,16 @@ class VendingMachineService
         $balance = \round($machineData->getBalance(), 2);
         $item = \json_decode($item, true, 512, JSON_THROW_ON_ERROR)['item'];
 
-        $itemPrice = $machineData->getItem($item)['price'];
-
-        if ($itemPrice > $balance) {
-            return ApiResponse::error('No enough balance to purchase.', $this->buildResponseData($machineData));
-        }
-
         try {
             $this->stockService->validateItem($item, $machineData);
         } catch (\Throwable $e) {
             return ApiResponse::error($e->getMessage(), $this->buildResponseData($machineData));
+        }
+
+        $itemPrice = $machineData->getItem($item)->price;
+
+        if ($itemPrice > $balance) {
+            return ApiResponse::error('No enough balance to purchase.', $this->buildResponseData($machineData));
         }
 
         $this->coinService->decreaseBalance($itemPrice, $machineData);
@@ -138,14 +139,14 @@ class VendingMachineService
     /**
      * Manage coins at balance and coin inventory.
      *
-     * @param float $coin
+     * @param string $insertedCoin
      * @param VendingMachine $machine
      * @return void
      */
-    protected function manageCoins(float $coin, VendingMachine $machine): void
+    protected function manageCoins(string $insertedCoin, VendingMachine $machine): void
     {
-        $this->coinService->incrementCoin($coin, $machine);
-        $this->coinService->updateBalance($coin, $machine);
+        $this->coinService->incrementCoin($insertedCoin, $machine);
+        $this->coinService->updateBalance($insertedCoin, $machine);
     }
 
     /**
@@ -157,5 +158,19 @@ class VendingMachineService
     protected function buildResponseData(VendingMachine $machineData): array
     {
         return \array_merge(['Balance' => $machineData->getBalance()], $machineData->getItems());
+    }
+
+    /**
+     * Create inserted coin DTO.
+     *
+     * @param string $rawCoin
+     * @return string
+     *
+     * @throws \JsonException
+     */
+    protected function parseCoin(string $rawCoin): string
+    {
+        $coinValue = \json_decode($rawCoin, true, 512, JSON_THROW_ON_ERROR);
+        return \number_format($coinValue['coin'], 2, '.', '');
     }
 }

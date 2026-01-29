@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\DTO\Item;
 use App\DTO\VendingMachine;
 
 class StockService
@@ -18,13 +19,13 @@ class StockService
      */
     public function validateItem(string $item, VendingMachine $machine): void
     {
-        $items = $machine->getItems();
+        $itemDto = $machine->getItem($item);
 
-        if (!\array_key_exists($item, $items)) {
+        if (!$itemDto instanceof Item) {
             throw new \Exception('Item not found on the inventory.');
         }
 
-        if ($items[$item]['qty'] === 0) {
+        if (!$itemDto->hasStock()) {
             throw new \Exception(\sprintf('Item %s without stock.', $item));
         }
     }
@@ -33,19 +34,21 @@ class StockService
      * Call DTO to reduce Stock.
      *
      * @param string $item
-     * @param VendingMachine $vendingMachine
+     * @param VendingMachine $machine
      * @return void
      */
-    public function reduceStock(string $item, VendingMachine $vendingMachine): void
+    public function reduceStock(string $item, VendingMachine $machine): void
     {
-        $vendingMachine->reduceItemStock($item);
+        $machine->reduceItemStock($item);
     }
 
-    public function updateItemsData(array $items, VendingMachine $vendingMachine): void
+    public function updateItemsData(array $items, VendingMachine $machine): void
     {
         foreach ($items as $key => $data) {
-            if ($vendingMachine->itemExists($key)) {
-                $vendingMachine->setItemData($key, $data);
+            $itemDto = $machine->getItem($key);
+
+            if ($itemDto instanceof Item) {
+                $itemDto->setStock($data->qty);
             }
         }
     }

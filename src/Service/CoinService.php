@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\DTO\Coin;
 use App\DTO\VendingMachine;
 
 class CoinService
@@ -13,13 +14,13 @@ class CoinService
     /**
      * Check if the inserted coin is valid.
      *
-     * @param float $coin
+     * @param string $insertedCoin
      * @param VendingMachine $machine
      * @return bool
      */
-    public function isValidCoin(float $coin, VendingMachine $machine): bool
+    public function isValidCoin(string $insertedCoin, VendingMachine $machine): bool
     {
-        return \in_array($coin, \array_keys($machine->getCoins()), false);
+        return \in_array($insertedCoin, \array_keys($machine->getCoins()), true);
     }
 
     /**
@@ -92,25 +93,26 @@ class CoinService
      * @param VendingMachine $machine
      * @return void
      */
-    public function decrementCoins(array $coinsToReturn, VendingMachine $machine): void
+    public function decreaseCoins(array $coinsToReturn, VendingMachine $machine): void
     {
         foreach ($coinsToReturn as $coin) {
-            $total = $machine->getCoinAmount($coin);
-            $machine->setCoinAmount($coin, --$total);
+            $coinStr = \number_format($coin, 2, '.', '');
+            $coinDto = $machine->getCoin($coinStr);
+            $coinDto->decrease();
         }
     }
 
     /**
      * Update balance.
      *
-     * @param float $coin
+     * @param string $insertedCoin
      * @param VendingMachine $machine
      * @return void
      */
-    public function updateBalance(float $coin, VendingMachine $machine): void
+    public function updateBalance(string $insertedCoin, VendingMachine $machine): void
     {
         $currentBalance = $machine->getBalance();
-        $machine->setBalance(\round($currentBalance + $coin, 2));
+        $machine->setBalance(\round($currentBalance + (float) $insertedCoin, 2));
     }
 
     /**
@@ -122,11 +124,9 @@ class CoinService
      */
     public function setCoinChange(array $coins, VendingMachine $machine): void
     {
-        foreach ($coins as $coin => $qty) {
-            $coin = \round((float) $coin, 2);
-
+        foreach ($coins as $coin => $data) {
             if ($machine->coinExists($coin)) {
-                $machine->setCoinAmount($coin, $qty);
+                $machine->getCoin($coin)->setQuantity($data->quantity);
             }
         }
     }
@@ -134,14 +134,14 @@ class CoinService
     /**
      * Update coins.
      *
-     * @param float $coin
+     * @param string $insertedCoin
      * @param VendingMachine $machine
      * @return void
      */
-    public function incrementCoin(float $coin, VendingMachine $machine): void
+    public function incrementCoin(string $insertedCoin, VendingMachine $machine): void
     {
-        $current = $machine->getCoinAmount($coin);
-        $machine->setCoinAmount($coin, $current + 1);
+        $machineCoin = $machine->getCoin($insertedCoin);
+        $machineCoin?->increase();
     }
 
     /**

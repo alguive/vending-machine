@@ -25,8 +25,8 @@ class VendingMachine
 
         return new VendingMachine(
             balance: $data['balance'],
-            coins: $data['coins'],
-            items: $data['items'],
+            coins: self::initCoins($data['coins']),
+            items: self::initItems($data['items']),
         );
     }
 
@@ -51,14 +51,28 @@ class VendingMachine
     }
 
     /**
-     * Return amount of coins of coin.
+     * Get coin if exists.
+     *
+     * @param string $coin
+     * @return Coin|null
+     */
+    public function getCoin(string $coin): ?Coin
+    {
+        return $this->coins[$coin] ?? null;
+    }
+
+    /**
+     * Return amount of coins of a coin.
      *
      * @param float $coin
      * @return int
      */
     public function getCoinAmount(float $coin): int
     {
-        return $this->coins[\number_format($coin, 2, '.', '')] ?? 0;
+        /** @var Coin $coinData */
+        $coinData = $this->coins[\number_format($coin, 2, '.', '')] ?? 0;
+
+        return $coinData->quantity;
     }
 
     /**
@@ -75,11 +89,11 @@ class VendingMachine
      * Return item values.
      *
      * @param string $item
-     * @return array
+     * @return Item|null
      */
-    public function getItem(string $item): array
+    public function getItem(string $item): ?Item
     {
-        return $this->items[$item] ?? [];
+        return $this->items[$item] ?? null;
     }
 
     /**
@@ -141,10 +155,10 @@ class VendingMachine
 
     public function reduceItemStock(string $item): void
     {
-        $itemData = $this->getItem($item);
-        $itemData['qty'] -= 1;
-
-        $this->setItemData($item, $itemData);
+        $itemDto = $this->getItem($item);
+        if ($itemDto !== null) {
+            $itemDto->reduceStock();
+        }
     }
 
     /**
@@ -161,12 +175,12 @@ class VendingMachine
     /**
      * Check if coin exists.
      *
-     * @param float $coin
+     * @param string $coinType
      * @return bool
      */
-    public function coinExists(float $coin): bool
+    public function coinExists(string $coinType): bool
     {
-        return isset($this->coins[$coin]);
+        return isset($this->coins[$coinType]);
     }
 
     /**
@@ -202,5 +216,37 @@ class VendingMachine
     protected static function parseJson(string $json): array
     {
         return \json_decode($json, true);
+    }
+
+    /**
+     * initialize coins DTOs.
+     *
+     * @param array $data
+     * @return array
+     */
+    protected static function initCoins(array $data): array
+    {
+        $coins = [];
+        foreach ($data as $key => $coin) {
+            $coins[$key] = new Coin($key, $coin['quantity']);
+        }
+
+        return $coins;
+    }
+
+    /**
+     * Initialize items DTOs.
+     *
+     * @param array $data
+     * @return array
+     */
+    protected static function initItems(array $data): array
+    {
+        $items = [];
+        foreach ($data as $key => $item) {
+            $items[$key] = new Item($key, $item['qty'], $item['price']);
+        }
+
+        return $items;
     }
 }
