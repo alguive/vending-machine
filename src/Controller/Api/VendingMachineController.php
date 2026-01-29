@@ -14,7 +14,6 @@ class VendingMachineController
 {
     public function __construct(
         protected VendingMachineService $vendingMachineService,
-        protected VendingMachineRepository $vendingMachineRepository,
     ) {
     }
 

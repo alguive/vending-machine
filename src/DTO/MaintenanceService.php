@@ -23,7 +23,7 @@ class MaintenanceService
     }
 
     /**
-     * Get items.
+     * Get coins.
      *
      * @return array
      */
@@ -33,7 +33,7 @@ class MaintenanceService
     }
 
     /**
-     * Get coins.
+     * Get items.
      *
      * @return array
      */

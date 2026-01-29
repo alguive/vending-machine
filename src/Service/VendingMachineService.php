@@ -151,10 +151,10 @@ class VendingMachineService
     /**
      * Merge arrays to return information to the user.
      *
-     * @param $machineData
+     * @param VendingMachine $machineData
      * @return array
      */
-    protected function buildResponseData($machineData): array
+    protected function buildResponseData(VendingMachine $machineData): array
     {
         return \array_merge(['Balance' => $machineData->getBalance()], $machineData->getItems());
     }
