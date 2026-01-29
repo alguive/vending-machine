@@ -51,6 +51,17 @@ class VendingMachineStatus
     }
 
     /**
+     * Return amount of coins of coin.
+     *
+     * @param float $coin
+     * @return int
+     */
+    public function getCoinAmount(float $coin): int
+    {
+        return $this->coins[\number_format($coin, 2, '.', '')] ?? 0;
+    }
+
+    /**
      * Get items available.
      *
      * @return array
