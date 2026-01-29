@@ -21,9 +21,11 @@ class VendingMachineController
      * @throws \Exception
      */
     #[Route('/api/vending-machine', name: 'api_vending_machine', methods: ['GET'])]
-    public function index(Request $request): JsonResponse
+    public function index(): JsonResponse
     {
-        return new JsonResponse([]);
+        $machineStatus = $this->vendingMachineRepository->read();
+
+        return JsonResponse::fromJsonString($machineStatus->toJson());
     }
 
     /**
