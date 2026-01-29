@@ -19,6 +19,19 @@ class VendingMachineService
     }
 
     /**
+     * Get the general status of the machine.
+     *  Not included coin stock.
+     *
+     * @return ApiResponse
+     */
+    public function getStatus(): ApiResponse
+    {
+        $machineData = $this->vendingMachineRepository->read();
+
+        return ApiResponse::success('The current machine status is.', $this->buildResponseData($machineData));
+    }
+
+    /**
      * Manages the inserted coin.
      *  If the coin is not valid, the balance & the coin inventory is not updated.
      *  If the coin inserted has value of 1, then check if the machine has enough change. If not, reject coin.

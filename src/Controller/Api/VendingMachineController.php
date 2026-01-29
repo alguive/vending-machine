@@ -16,7 +16,6 @@ class VendingMachineController
         protected VendingMachineService $vendingMachineService,
         protected VendingMachineRepository $vendingMachineRepository,
     ) {
-        // Empty constructor
     }
 
     /**
@@ -27,9 +26,7 @@ class VendingMachineController
     #[Route('/api/vending-machine', name: 'api_vending_machine', methods: ['GET'])]
     public function index(): JsonResponse
     {
-        $machineStatus = $this->vendingMachineRepository->read();
-
-        return JsonResponse::fromJsonString($machineStatus->toJson());
+        return JsonResponse::fromJsonString($this->vendingMachineService->getStatus()->toString());
     }
 
     /**
