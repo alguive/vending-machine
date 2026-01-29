@@ -12,6 +12,7 @@ class VendingMachineService
 {
     public function __construct(
         protected CoinService $coinService,
+        protected StockService $stockService,
         protected VendingMachineRepository $vendingMachineRepository,
     ) {
     }
@@ -62,8 +63,8 @@ class VendingMachineService
             $coinsToReturn = $this->coinService->calculateChange($machineData);
             $this->coinService->decrementCoins($coinsToReturn, $machineData);
             $this->coinService->decreaseBalance($balance, $machineData);
-        } catch (\Throwable $exception) {
-            return ApiResponse::error($exception->getMessage());
+        } catch (\Throwable $e) {
+            return ApiResponse::error($e->getMessage());
         }
 
         $this->vendingMachineRepository->persist($machineData);
@@ -71,6 +72,35 @@ class VendingMachineService
         return ApiResponse::success(
             \sprintf('Returned %s', $balance),
             $coinsToReturn
+        );
+    }
+
+    /**
+     * @throws \JsonException
+     */
+    public function purchase(string $item): ApiResponse
+    {
+        $machineData = $this->vendingMachineRepository->read();
+        $balance = \round($machineData->getBalance(), 2);
+        $item = \json_decode($item, true, 512, JSON_THROW_ON_ERROR)['item'];
+
+        $itemPrice = $machineData->getItem($item)['price'];
+
+        if ($itemPrice > $balance) {
+            return ApiResponse::error('No enough balance to purchase.', $this->buildResponseData($machineData));
+        }
+
+        try {
+            $this->stockService->validateItem($item, $machineData);
+        } catch (\Throwable $e) {
+            return ApiResponse::error($e->getMessage(), $this->buildResponseData($machineData));
+        }
+
+        $this->coinService->decreaseBalance($itemPrice, $machineData);
+        $this->stockService->reduceStock($item, $machineData);
+        $this->vendingMachineRepository->persist($machineData);
+
+        return ApiResponse::success('Item purchased successfully.', $this->buildResponseData($machineData)
         );
     }
 
@@ -85,5 +115,16 @@ class VendingMachineService
     {
         $this->coinService->updateCoins($coin, $machine);
         $this->coinService->updateBalance($coin, $machine);
+    }
+
+    /**
+     * Merge arrays to return information to the user.
+     *
+     * @param $machineData
+     * @return array
+     */
+    protected function buildResponseData($machineData): array
+    {
+        return \array_merge(['Balance' => $machineData->getBalance()], $machineData->getItems());
     }
 }

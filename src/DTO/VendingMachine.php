@@ -62,6 +62,27 @@ class VendingMachine
     }
 
     /**
+     * Get items available.
+     *
+     * @return array
+     */
+    public function getItems(): array
+    {
+        return $this->items;
+    }
+
+    /**
+     * Return item values.
+     *
+     * @param string $item
+     * @return array
+     */
+    public function getItem(string $item): array
+    {
+        return $this->items[$item] ?? [];
+    }
+
+    /**
      * Set amount for specific coin.
      *
      * @param float $coin
@@ -71,16 +92,6 @@ class VendingMachine
     public function setCoinAmount(float $coin, int $amount): void
     {
         $this->coins[\number_format($coin, 2, '.', '')] = $amount;
-    }
-
-    /**
-     * Get items available.
-     *
-     * @return array
-     */
-    public function getItems(): array
-    {
-        return $this->items;
     }
 
     /**
@@ -114,6 +125,26 @@ class VendingMachine
     public function setItems(array $items): void
     {
         $this->items = $items;
+    }
+
+    /**
+     * Set item values.
+     *
+     * @param string $item
+     * @param array $values
+     * @return void
+     */
+    public function setItemData(string $item, array $values): void
+    {
+        $this->items[$item] = $values;
+    }
+
+    public function reduceItemStock(string $item): void
+    {
+        $itemData = $this->getItem($item);
+        $itemData['qty'] -= 1;
+
+        $this->setItemData($item, $itemData);
     }
 
     /**

@@ -57,7 +57,7 @@ class VendingMachineController
     #[Route('/api/vending-machine/purchase', name: 'api_vending_machine_purchase', methods: ['POST'])]
     public function purchase(Request $request): JsonResponse
     {
-        return new JsonResponse([]);
+        return JsonResponse::fromJsonString($this->vendingMachineService->purchase($request->getContent())->toString());
     }
 
     /**

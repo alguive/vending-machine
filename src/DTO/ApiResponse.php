@@ -15,7 +15,7 @@ class ApiResponse
     public function __construct(
         public readonly string $status,
         public readonly string $message,
-        public readonly ?array $data = null,
+        public readonly array $data,
     ) {
     }
 
@@ -28,11 +28,12 @@ class ApiResponse
         );
     }
 
-    public static function error(string $message): self
+    public static function error(string $message, array $data = []): self
     {
         return new self(
             status: self::ERROR,
             message: $message,
+            data: $data,
         );
     }
 

@@ -71,7 +71,7 @@ class CoinService
         foreach ($this->sortAvailableChangeCoins() as $coin) {
             $totalCoins = $machine->getCoinAmount($coin);
 
-            while ($totalBalance > 0 && $totalCoins > 0) {
+            while ($totalBalance > 0 && $totalCoins > 0 && $totalBalance >= $coin) {
                 $coinsToReturn[] = $coin;
                 $totalBalance = \round($totalBalance - $coin, 2);
                 $totalCoins--;
