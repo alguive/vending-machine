@@ -52,6 +52,8 @@ class VendingMachineController
     }
 
     /**
+     * Purchase items from the Vending Machine.
+     *
      * @throws \Exception
      */
     #[Route('/api/vending-machine/purchase', name: 'api_vending_machine_purchase', methods: ['POST'])]
@@ -61,11 +63,15 @@ class VendingMachineController
     }
 
     /**
+     * Make service maintaining to the Vending Machine.
+     *
      * @throws \Exception
      */
-    #[Route('/api/vending-machine/services', name: 'api_vending_machine_services', methods: ['GET'])]
+    #[Route('/api/vending-machine/service', name: 'api_vending_machine_service', methods: ['PUT'])]
     public function service(Request $request): JsonResponse
     {
-        return new JsonResponse([]);
+        return JsonResponse::fromJsonString(
+            $this->vendingMachineService->maintenanceService($request->getContent())->toString()
+        );
     }
 }

@@ -43,6 +43,10 @@ class StockService
 
     public function updateItemsData(array $items, VendingMachine $vendingMachine): void
     {
-
+        foreach ($items as $key => $data) {
+            if ($vendingMachine->itemExists($key)) {
+                $vendingMachine->setItemData($key, $data);
+            }
+        }
     }
 }

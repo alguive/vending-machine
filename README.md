@@ -16,5 +16,6 @@ http://localhost:8080/api/vending-machine/
   ├── insertCoin()     →  POST   /api/vending-machine/coins
   ├── returnCoins()    →  DELETE /api/vending-machine/coins
   ├── purchase()       →  POST   /api/vending-machine/purchase
+  ├── service()        →  PUT    /api/vending-machine/service
   └── status()         →  GET    /api/vending-machine
 ```

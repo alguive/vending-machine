@@ -148,6 +148,28 @@ class VendingMachine
     }
 
     /**
+     * Check if item exists on the inventory.
+     *
+     * @param string $item
+     * @return bool
+     */
+    public function itemExists(string $item): bool
+    {
+        return isset($this->items[$item]);
+    }
+
+    /**
+     * Check if coin exists.
+     *
+     * @param float $coin
+     * @return bool
+     */
+    public function coinExists(float $coin): bool
+    {
+        return isset($this->coins[$coin]);
+    }
+
+    /**
      * Transform DTO into an array.
      *
      * @return array

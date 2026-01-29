@@ -114,20 +114,34 @@ class CoinService
     }
 
     /**
+     * Update change coins on the machine.
+     *
+     * @param array $coins
+     * @param VendingMachine $machine
+     * @return void
+     */
+    public function setCoinChange(array $coins, VendingMachine $machine): void
+    {
+        foreach ($coins as $coin => $qty) {
+            $coin = \round((float) $coin, 2);
+
+            if ($machine->coinExists($coin)) {
+                $machine->setCoinAmount($coin, $qty);
+            }
+        }
+    }
+
+    /**
      * Update coins.
      *
      * @param float $coin
      * @param VendingMachine $machine
      * @return void
      */
-    public function updateCoins(float $coin, VendingMachine $machine): void
+    public function incrementCoin(float $coin, VendingMachine $machine): void
     {
-        $key = \number_format($coin, 2, '.', '');
-
-        $coins = $machine->getCoins();
-        $coins[$key]++;
-
-        $machine->setCoins($coins);
+        $current = $machine->getCoinAmount($coin);
+        $machine->setCoinAmount($coin, $current + 1);
     }
 
     /**

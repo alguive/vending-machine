@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\DTO\ApiResponse;
+use App\DTO\MaintenanceService;
 use App\DTO\VendingMachine;
 use App\Repository\VendingMachineRepository;
 
@@ -100,8 +101,25 @@ class VendingMachineService
         $this->stockService->reduceStock($item, $machineData);
         $this->vendingMachineRepository->persist($machineData);
 
-        return ApiResponse::success('Item purchased successfully.', $this->buildResponseData($machineData)
-        );
+        return ApiResponse::success('Item purchased successfully.', $this->buildResponseData($machineData));
+    }
+
+    /**
+     * Maintain change and items on the machine.
+     *
+     * @param string $service
+     * @return ApiResponse
+     */
+    public function maintenanceService(string $service): ApiResponse
+    {
+        $serviceDto = MaintenanceService::fromJson($service);
+        $machineData = $this->vendingMachineRepository->read();
+
+        $this->coinService->setCoinChange($serviceDto->getCoins(), $machineData);
+        $this->stockService->updateItemsData($serviceDto->getItems(), $machineData);
+        $this->vendingMachineRepository->persist($machineData);
+
+        return ApiResponse::success('Items & change updated successfully.', $machineData->toArray());
     }
 
     /**
@@ -113,7 +131,7 @@ class VendingMachineService
      */
     protected function manageCoins(float $coin, VendingMachine $machine): void
     {
-        $this->coinService->updateCoins($coin, $machine);
+        $this->coinService->incrementCoin($coin, $machine);
         $this->coinService->updateBalance($coin, $machine);
     }
 
