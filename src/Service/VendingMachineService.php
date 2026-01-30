@@ -29,7 +29,7 @@ class VendingMachineService
     {
         $machineData = $this->vendingMachineRepository->read();
 
-        return ApiResponse::success('The current machine status is.', $this->buildResponseData($machineData));
+        return ApiResponse::success('The current machine status is: ', $this->buildResponseData($machineData));
     }
 
     /**
