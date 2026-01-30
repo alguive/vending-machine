@@ -97,18 +97,6 @@ class VendingMachine
     }
 
     /**
-     * Set amount for specific coin.
-     *
-     * @param float $coin
-     * @param int $amount
-     * @return void
-     */
-    public function setCoinAmount(float $coin, int $amount): void
-    {
-        $this->coins[\number_format($coin, 2, '.', '')] = $amount;
-    }
-
-    /**
      * Update balance with the inserted coins.
      *
      * @param float $balance
@@ -119,57 +107,12 @@ class VendingMachine
         $this->balance = $balance;
     }
 
-    /**
-     * Update Coins.
-     *
-     * @param array $coins
-     * @return void
-     */
-    public function setCoins(array $coins): void
-    {
-        $this->coins = $coins;
-    }
-
-    /**
-     * Update Items.
-     *
-     * @param array $items
-     * @return void
-     */
-    public function setItems(array $items): void
-    {
-        $this->items = $items;
-    }
-
-    /**
-     * Set item values.
-     *
-     * @param string $item
-     * @param array $values
-     * @return void
-     */
-    public function setItemData(string $item, array $values): void
-    {
-        $this->items[$item] = $values;
-    }
-
     public function reduceItemStock(string $item): void
     {
         $itemDto = $this->getItem($item);
         if ($itemDto !== null) {
             $itemDto->reduceStock();
         }
-    }
-
-    /**
-     * Check if item exists on the inventory.
-     *
-     * @param string $item
-     * @return bool
-     */
-    public function itemExists(string $item): bool
-    {
-        return isset($this->items[$item]);
     }
 
     /**
