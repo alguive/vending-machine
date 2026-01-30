@@ -35,7 +35,8 @@ class CoinService
         $changeCoins = $this->sortAvailableChangeCoins();
 
         foreach ($changeCoins as $change) {
-            $totalStock = $machine->getCoinAmount($change);
+            $changeStr = \number_format($change, 2, '.', '');
+            $totalStock = $machine->getCoin($changeStr)?->quantity ?? 0;
             $totalBalance = \max($totalBalance - ($change * $totalStock), 0);
         }
 
@@ -67,15 +68,17 @@ class CoinService
     public function calculateChange(VendingMachine $machine, float $amount = 0.0): array
     {
         $coinsToReturn = [];
-        $totalBalance = \round($machine->getBalance() - $amount, 2);
+        $totalBalance = round($machine->getBalance() - $amount, 2);
 
         foreach ($this->sortAvailableChangeCoins() as $coin) {
-            $totalCoins = $machine->getCoinAmount($coin);
+            $coinStr = number_format($coin, 2, '.', '');
+            $coinDto = $machine->getCoin($coinStr);
+            $available = $coinDto->quantity ?? 0;
 
-            while ($totalBalance > 0 && $totalCoins > 0 && $totalBalance >= $coin) {
+            while ($totalBalance > 0 && $available > 0 && $totalBalance >= $coin) {
                 $coinsToReturn[] = $coin;
-                $totalBalance = \round($totalBalance - $coin, 2);
-                $totalCoins--;
+                $totalBalance = round($totalBalance - $coin, 2);
+                $coinDto->decrease();
             }
         }
 
