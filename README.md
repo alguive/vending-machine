@@ -21,6 +21,6 @@ http://localhost:8080/api/vending-machine/
   ├── service()        →  PUT    /api/vending-machine/service
   └── status()         →  GET    /api/vending-machine
 ```
-
+## How to use
 In the root directory there's the Postman Collection to import it and use it.
 
